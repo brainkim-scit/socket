@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="global.sesoc.board.dao.board.boardMapper">
+	<insert id="insert" parameterType="board">
+		insert into board(
+		boardno,
+		writer,
+		title,
+		content
+		<if test="originalfilename != null">
+		, originalfilename,
+		savedfilename
+		</if>
+		)
+		values(
+		board_seq.nextval,
+		#{writer},
+		#{title},
+		#{content},
+		#{originalfilename},
+		#{savedfilename}
+		)
+	</insert>
+	
+	<!-- 구버전 -->
+	<select id="selectAll_1" parameterType="map" resultType="board">
+		select * from
+		(
+		select row_number() over(order by boardno desc) as currentPages,
+		row_number() over(order by boardno) as num,
+		a.*
+		from board a 
+		where
+		<if test="select == 'writer'and aim != null">
+			writer like '%'||#{aim}||'%'
+		</if>
+		
+		<if test="select == 'content' and aim != null">
+			content like '%'||#{aim}||'%'
+		</if>
+		
+		<if test="select == 'title' and aim != null">
+			title like '%'||#{aim}||'%'
+		</if>
+		order by boardno desc)
+		<!-- select * from board -->
+		where
+		currentPages between
+			#{start}
+		and
+			#{end}
+			
+	</select>
+	
+	<select id="select" parameterType="int" resultType="board">
+		select * from board where boardno = #{boardno}
+	</select>
+	
+	<delete id="delete" parameterType="board">
+		delete from board where boardno = #{boardno} and writer=#{writer}
+	</delete>
+	
+	<update id="update" parameterType="board">
+		update board set
+			title = #{title},
+			content = #{content},
+			regdate = sysdate
+			
+			<!-- 저장된 파일이 있을 경우와 없을 경우 -->
+			<if test="originalfilename == null">
+			,originalfilename = '',
+			savedfilename = ''
+			</if>
+			
+			<if test="originalfilename != null">
+			,originalfilename = #{originalfilename},
+			savedfilename = #{savedfilename}
+			</if>
+		where boardno = #{boardno} and writer=#{writer}
+	</update>
+	
+	<update id="count" parameterType="board">
+		update board set
+			hitcount = #{hitcount}+1
+		where boardno = #{boardno}
+	</update>
+	
+	<select id="getBoardCount" parameterType="map" resultType="int">
+		select count(*) from board
+		where
+			<choose>
+				<when test="select=='writer'">writer</when>
+				<when test="select=='title'">title</when>
+				<when test="select=='content'">writer</when>
+			</choose>
+		like '%'||#{aim}||'%'
+	</select>
+	
+	<select id="selectAll" resultType="Board" parameterType="map">
+		select r.count as count,
+		b.boardno as boardno,
+		b.writer as writer,
+		b.title as title,
+		b.content as content,
+		b.regdate as regdate,
+		b.hitcount as hitcount,
+		b.originalfilename as originalfilename,
+		b.savedfilename as savedfilename
+		from (select count(*) as count, boardno from reply group by boardno) r right outer join board b on (r.boardno = b.boardno)
+		where
+			<choose>
+				<when test="select=='writer'">writer</when>
+				<when test="select=='title'">title</when>
+				<when test="select=='content'">writer</when>
+			</choose>
+		like '%'||#{aim}||'%'
+		order by boardno desc
+	</select>
+	
+<!-- 	<select id="currentPage" parameterType="map" resultType="board"> -->
+<!-- 		select * from(select row_number() over(order by boardno) num, a.* -->
+<!-- 		from board a -->
+<!-- 		where -->
+<!-- 		<if test="select == 'writer'and aim != null"> -->
+<!-- 			writer like '%'||#{aim}||'%' -->
+<!-- 		</if> -->
+		
+<!-- 		<if test="select == 'content' and aim != null"> -->
+<!-- 			content like '%'||#{aim}||'%' -->
+<!-- 		</if> -->
+		
+<!-- 		<if test="select == 'title' and aim != null"> -->
+<!-- 			title like '%'||#{aim}||'%' or content like '%'||#{aim}||'%' -->
+<!-- 		</if> -->
+<!-- 		order by boardno desc) board -->
+<!-- 		where num BETWEEN -->
+<!-- 		#{currentPage} * #{countPerPage} - #{countPerPage}+1 -->
+<!-- 		and #{currentPage} * #{countPerPage} -->
+		
+<!-- 	</select> -->
+	
+<!-- 	<select id="search" parameterType="map" resultType="board"> -->
+<!-- 		select * from board where -->
+<!-- 		<if test="select == 'writer'and aim != null"> -->
+<!-- 			writer like '%'||#{aim}||'%' -->
+<!-- 		</if> -->
+		
+<!-- 		<if test="select == 'content' and aim != null"> -->
+<!-- 			content like '%'||#{aim}||'%' -->
+<!-- 		</if> -->
+		
+<!-- 		<if test="select == 'title' and aim != null"> -->
+<!-- 			title like '%'||#{aim}||'%' or content like '%'||#{aim}||'%' -->
+<!-- 		</if> -->
+<!-- 		 order by boardno desc -->
+<!-- 	</select> -->
+</mapper>

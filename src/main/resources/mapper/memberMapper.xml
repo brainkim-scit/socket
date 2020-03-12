@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="global.sesoc.board.dao.member.memberMapper">
+	<insert id="signup" parameterType="member">
+		insert into member(
+			member_seq,
+			id,
+			username,
+			pw,
+			email,
+			division,
+			idno,
+			address)
+		values(
+			member_seq.nextval,
+			#{id},
+			#{username},
+			#{pw},
+			#{email},
+			#{division},
+			#{idNo},
+			#{address}
+		)
+	</insert>
+	
+	<select id="login" parameterType="String" resultType="member">
+		select * from member where id = #{id}
+	</select>
+	
+	<select id="check" parameterType="member" resultType="Integer">
+		select * from member where id = #{id}
+	</select>
+	
+	<delete id="delete" parameterType="int">
+		delete from member where id = #{id} and pw = #{pw}
+	</delete>
+	
+	<update id="update" parameterType="member">
+		update member set
+			username = #{username},
+			id = #{id},
+			pw = #{pw},
+			email = #{email},
+			idNo = #{idNo},
+			address = #{address}
+		where id = #{id}
+	</update>
+</mapper>

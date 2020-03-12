@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="global.sesoc.board.dao.guestbook.guestbookMapper">
+	<insert id="insert" parameterType="guestbook">
+		insert into guestbook(
+			seqno,
+			guestname,
+			guestpwd,
+			text)
+		values(
+			seqno.nextval,
+			#{guestname},
+			#{guestpwd},
+			#{text}
+		)
+	</insert>
+	
+	<select id="selectAll" resultType="guestbook">
+		select * from guestbook order by regdate desc
+	</select>
+	
+	<select id="select" parameterType="int" resultType="guestbook">
+		select * from guestbook where seqno = #{seqno}
+	</select>
+	
+	<delete id="delete" parameterType="int">
+		delete from guestbook where seqno = #{seqno}
+	</delete>
+	
+	<update id="update" parameterType="guestbook">
+		update guestbook set
+			guestname = #{guestname},
+			guestpwd = #{guestpwd},
+			text = #{text}
+		where seqno = #{seqno}
+	</update>
+	
+	<select id="search" parameterType="map" resultType="guestbook">
+		select * from guestbook
+		<if test="select == 'writer'">
+			where guestname like '%'||#{aim}||'%'
+		</if>
+		
+		<if test="select == 'text'">
+			where text like '%'||#{aim}||'%'
+		</if>
+		
+		<if test="select == 'writerText'">
+			where guestname like '%'||#{aim}||'%' or text like '%'||#{aim}||'%'
+		</if>
+	</select>
+</mapper>
