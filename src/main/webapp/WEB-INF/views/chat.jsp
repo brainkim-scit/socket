@@ -8,6 +8,7 @@
 <style type="text/css">
 </style>
 <script src="resources/js/jquery-3.4.1.min.js"></script>
+<script src="resources/js/sockjs.js"></script>
 <script type="text/javascript">
 	$(function(){
 		connect();
@@ -23,20 +24,20 @@
 		});
 	});
 
-	var websocket;
+	var sock;
 	function connect(){
-		websocket = new WebSocket("ws://203.233.199.155:8089/board/chat-ws");
+		sock = new SockJS("chat.sockjs");
 
-		websocket.onopen = onOpen;
-		websocket.onmessage = onMessage;
-		websocket.onclose = onClose;
-		websocket.onerror = onError;
+		sock.onopen = onOpen;
+		sock.onmessage = onMessage;
+		sock.onclose = onClose;
+		sock.onerror = onError;
 	}
 
 	function disconnect(){
 		var msg = "${sessionScope.member.username}";
-		websocket.send(msg+"님이 퇴장하셨습니다.");
-		websocket.close();
+		sock.send(msg+"님이 퇴장하셨습니다.");
+		sock.close();
 	}
 
 	function send(){
@@ -52,14 +53,14 @@
 		$("#chatarea").append(input);
 		$("#chatarea").scrollTop($("#chatarea")[0].scrollHeight);
 
-		websocket.send(nickname+":"+message);
+		sock.send(nickname+":"+message);
 
 		$("#message").val("");
 	}
 
 	function onOpen(){
 		var nickname = "${sessionScope.member.username}";
-		websocket.send(nickname+"님이 입장하셨습니다.");
+		sock.send(nickname+"님이 입장하셨습니다.");
 	}
 
 	function onMessage(event){
@@ -85,7 +86,7 @@
 	function onClose(event){
 		console.log(event);
 		var nickname = "${sessionScope.member.username}";
-		websocket.send(nickname+"님이 퇴장하셨습니다.");
+		sock.send(nickname+"님이 퇴장하셨습니다.");
 	}
 </script>
 </head>

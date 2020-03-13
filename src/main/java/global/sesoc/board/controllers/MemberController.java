@@ -58,6 +58,7 @@ public class MemberController {
 
 		if (member.getPw().equals(pw)) {
 			session.setAttribute("member", member);
+			session.setAttribute("id", member.getId());
 			if (saveRequest) {
 				Cookie idCookie = new Cookie("savedId", member.getId());
 				idCookie.setMaxAge(3600);

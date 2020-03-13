@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+
+import global.sesoc.board.vo.member;
 
 @Controller
 public class MainController {
@@ -20,6 +20,10 @@ public class MainController {
 		session.removeAttribute("select");
 		session.removeAttribute("aim");
 		session.removeAttribute("currentPage");
+		session.setAttribute("c", "check");
+		System.out.println((String)session.getAttribute("c"));
+		System.out.println((member)session.getAttribute("member"));
+		System.out.println((String)session.getAttribute("id"));
 		return "index";
 	}
 	

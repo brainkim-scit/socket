@@ -27,6 +27,8 @@ public class chatHandler extends TextWebSocketHandler {
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		String msg = message.getPayload();
+		String who = (String)session.getAttributes().get("username");
+		logger.info("{}로 부터 {}메세지가 요청됨",who,msg);
 		for(WebSocketSession s : list) {
 			if(!session.getId().equals(s.getId())) {
 				s.sendMessage(new TextMessage(msg));
