@@ -9,10 +9,11 @@
 </style>
 <script src="resources/js/jquery-3.4.1.min.js"></script>
 <script src="resources/js/sockjs.js"></script>
+<script src="resources/js/stomp.js"></script>
 <script type="text/javascript">
 	$(function(){
-		connect();
-
+// 		SockJSconnect();
+		StompConnect();
 		$("#exit").on("click",function(){
 			disconnect();
 		});
@@ -25,19 +26,23 @@
 	});
 
 	var sock;
-	function connect(){
-		sock = new SockJS("chat.sockjs");
+	var isStomp = false;
+	function StompConnect(){
+		sock = new SockJS("stomp");
+		console.log(sock);
+		var client = Stomp.over(sock);
+		console.log(client);
+		isStomp = true;
+		sock = client;
 
-		sock.onopen = onOpen;
-		sock.onmessage = onMessage;
-		sock.onclose = onClose;
-		sock.onerror = onError;
-	}
-
-	function disconnect(){
-		var msg = "${sessionScope.member.username}";
-		sock.send(msg+"님이 퇴장하셨습니다.");
-		sock.close();
+		client.connect({}, function(){
+			console.log("Connected Stomp");
+			client.send("/board/TTT", {}, "message : haha");
+			client.subscribe("/topic/message", function(event){
+				console.log(event);
+				alert("!!!! event >> "+event.body);
+			});
+		});
 	}
 
 	function send(){
@@ -53,40 +58,9 @@
 		$("#chatarea").append(input);
 		$("#chatarea").scrollTop($("#chatarea")[0].scrollHeight);
 
-		sock.send(nickname+":"+message);
+		sock.send("/board/TTT", {}, message);
 
 		$("#message").val("");
-	}
-
-	function onOpen(){
-		var nickname = "${sessionScope.member.username}";
-		sock.send(nickname+"님이 입장하셨습니다.");
-	}
-
-	function onMessage(event){
-		var input = '';
-		if(event.data.split(":").length == 1){
-			input += '<div class="a" style="width: 350px; text-align:center; line-height:50px; margin-top: 15px; display:inline-block;">';
-			input += event.data;
-			input += '</div>';
-		}else{
-			input += '<div class="a" style="width: 350px; line-height:50px; margin-top: 15px; display:inline-block;">';
-			input += '<div style="float: left; background-color:skyblue; padding-left: 15px; padding-right: 15px;">';
-			input += event.data;
-			input += '</div></div>';
-		}
-		$("#chatarea").append(input);
-		$("#chatarea").scrollTop($("#chatarea")[0].scrollHeight);
-	}
-
-	function onError(event){
-		console.log(event);
-	}
-
-	function onClose(event){
-		console.log(event);
-		var nickname = "${sessionScope.member.username}";
-		sock.send(nickname+"님이 퇴장하셨습니다.");
 	}
 </script>
 </head>

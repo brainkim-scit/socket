@@ -40,19 +40,10 @@
 			<mapping path="/reply"/>
 			<mapping path="/deleteReply"/>
 			<mapping path="/modifyReply"/>
+			<mapping path="/chat"/>
+			<mapping path="/"/>
 			
 			<beans:ref bean="loginInterceptor"/>
 		</interceptor>
 	</interceptors>
-	
-	<beans:bean id="chatHandler" class="global.sesoc.board.chatHandler.chatHandler"/>
-	
-	<websocket:handlers allowed-origins="http://localhost:8089, http://10.10.10.161:8089, http://203.233.199.155:8089">
-		<websocket:mapping handler="chatHandler" path="chat.ws"/>
-		<websocket:handshake-interceptors>
-			<beans:bean class="global.sesoc.board.chatHandler.chatInterceptor"></beans:bean>
-		</websocket:handshake-interceptors>
-		<websocket:sockjs></websocket:sockjs>
-	</websocket:handlers>
-	
 </beans:beans>
