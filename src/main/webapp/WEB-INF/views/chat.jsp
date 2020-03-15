@@ -12,10 +12,9 @@
 <script src="resources/js/stomp.js"></script>
 <script type="text/javascript">
 	$(function(){
-// 		SockJSconnect();
 		StompConnect();
 		$("#exit").on("click",function(){
-			disconnect();
+			sock.disconnect();
 		});
 
 		$("#message").on("keyup",function(key){
@@ -27,6 +26,7 @@
 
 	var sock;
 	var isStomp = false;
+	var id;
 	function StompConnect(){
 		sock = new SockJS("stomp");
 		console.log(sock);
@@ -37,8 +37,8 @@
 
 		client.connect({}, function(){
 			console.log("Connected Stomp");
-			client.send("/board/TTT", {}, "message : haha");
 			client.subscribe("/topic/message", function(event){
+				console.log(event);
 				onMessage(event);
 			});
 		});
@@ -64,16 +64,10 @@
 
 	function onMessage(event){
 		var input = '';
-		if(event.data.split(":").length == 1){
-			input += '<div class="a" style="width: 350px; text-align:center; line-height:50px; margin-top: 15px; display:inline-block;">';
-			input += event.body;
-			input += '</div>';
-		}else{
 			input += '<div class="a" style="width: 350px; line-height:50px; margin-top: 15px; display:inline-block;">';
 			input += '<div style="float: left; background-color:skyblue; padding-left: 15px; padding-right: 15px;">';
 			input += event.body;
 			input += '</div></div>';
-		}
 		$("#chatarea").append(input);
 		$("#chatarea").scrollTop($("#chatarea")[0].scrollHeight);
 	}
