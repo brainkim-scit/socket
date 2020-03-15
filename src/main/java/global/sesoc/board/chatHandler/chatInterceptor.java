@@ -27,6 +27,7 @@ public class chatInterceptor extends HttpSessionHandshakeInterceptor {
 		HttpSession session = servletRequest.getServletRequest().getSession();
 		member member = (member) session.getAttribute("member");
 		String username = member.getUsername();
+		logger.info(username);
 		attributes.put("username", username);
 		return super.beforeHandshake(request, response, wsHandler, attributes);
 	}
