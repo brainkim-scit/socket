@@ -39,8 +39,7 @@
 			console.log("Connected Stomp");
 			client.send("/board/TTT", {}, "message : haha");
 			client.subscribe("/topic/message", function(event){
-				console.log(event);
-				alert("!!!! event >> "+event.body);
+				onMessage(event);
 			});
 		});
 	}
@@ -61,6 +60,22 @@
 		sock.send("/board/TTT", {}, message);
 
 		$("#message").val("");
+	}
+
+	function onMessage(event){
+		var input = '';
+		if(event.data.split(":").length == 1){
+			input += '<div class="a" style="width: 350px; text-align:center; line-height:50px; margin-top: 15px; display:inline-block;">';
+			input += event.body;
+			input += '</div>';
+		}else{
+			input += '<div class="a" style="width: 350px; line-height:50px; margin-top: 15px; display:inline-block;">';
+			input += '<div style="float: left; background-color:skyblue; padding-left: 15px; padding-right: 15px;">';
+			input += event.body;
+			input += '</div></div>';
+		}
+		$("#chatarea").append(input);
+		$("#chatarea").scrollTop($("#chatarea")[0].scrollHeight);
 	}
 </script>
 </head>
