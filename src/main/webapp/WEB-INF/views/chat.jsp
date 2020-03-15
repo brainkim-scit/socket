@@ -8,10 +8,12 @@
 <style type="text/css">
 </style>
 <script src="resources/js/jquery-3.4.1.min.js"></script>
+<script src="resources/js/sockjs.js"></script>
+<script src="resources/js/stomp.js"></script>
 <script type="text/javascript">
 	$(function(){
-		connect();
-
+// 		SockJSconnect();
+		StompConnect();
 		$("#exit").on("click",function(){
 			disconnect();
 		});
@@ -23,20 +25,23 @@
 		});
 	});
 
-	var websocket;
-	function connect(){
-		websocket = new WebSocket("ws://203.233.199.155:8089/board/chat-ws");
+	var sock;
+	var isStomp = false;
+	function StompConnect(){
+		sock = new SockJS("stomp");
+		console.log(sock);
+		var client = Stomp.over(sock);
+		console.log(client);
+		isStomp = true;
+		sock = client;
 
-		websocket.onopen = onOpen;
-		websocket.onmessage = onMessage;
-		websocket.onclose = onClose;
-		websocket.onerror = onError;
-	}
-
-	function disconnect(){
-		var msg = "${sessionScope.member.username}";
-		websocket.send(msg+"님이 퇴장하셨습니다.");
-		websocket.close();
+		client.connect({}, function(){
+			console.log("Connected Stomp");
+			client.send("/board/TTT", {}, "message : haha");
+			client.subscribe("/topic/message", function(event){
+				onMessage(event);
+			});
+		});
 	}
 
 	function send(){
@@ -52,40 +57,25 @@
 		$("#chatarea").append(input);
 		$("#chatarea").scrollTop($("#chatarea")[0].scrollHeight);
 
-		websocket.send(nickname+":"+message);
+		sock.send("/board/TTT", {}, message);
 
 		$("#message").val("");
-	}
-
-	function onOpen(){
-		var nickname = "${sessionScope.member.username}";
-		websocket.send(nickname+"님이 입장하셨습니다.");
 	}
 
 	function onMessage(event){
 		var input = '';
 		if(event.data.split(":").length == 1){
 			input += '<div class="a" style="width: 350px; text-align:center; line-height:50px; margin-top: 15px; display:inline-block;">';
-			input += event.data;
+			input += event.body;
 			input += '</div>';
 		}else{
 			input += '<div class="a" style="width: 350px; line-height:50px; margin-top: 15px; display:inline-block;">';
 			input += '<div style="float: left; background-color:skyblue; padding-left: 15px; padding-right: 15px;">';
-			input += event.data;
+			input += event.body;
 			input += '</div></div>';
 		}
 		$("#chatarea").append(input);
 		$("#chatarea").scrollTop($("#chatarea")[0].scrollHeight);
-	}
-
-	function onError(event){
-		console.log(event);
-	}
-
-	function onClose(event){
-		console.log(event);
-		var nickname = "${sessionScope.member.username}";
-		websocket.send(nickname+"님이 퇴장하셨습니다.");
 	}
 </script>
 </head>

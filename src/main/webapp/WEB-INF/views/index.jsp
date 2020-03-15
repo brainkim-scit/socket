@@ -34,13 +34,6 @@ a{
 }
 
 </style>
-<script type="text/javascript">
-	window.onload = function(){
-		if(${cookie.containsKey('savedPw')}&&${sessionScope.member.id==null}){
-			location.href="login";
-		}
-	}
-</script>
 </head>
 <body>
 	<div id="wrapper">

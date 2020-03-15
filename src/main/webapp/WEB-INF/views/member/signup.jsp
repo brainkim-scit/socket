@@ -128,7 +128,7 @@ border-collapse: collapse;
 				<tr>
 					<th colspan="2" style="border-left: none;border-right: none;border-bottom: none;">
 						<input type="hidden" id="onoff">
-						<input type="button" id="signup" value="회원가입" style="width: 15%" onclick="notice()">
+						<input type="submit" id="signup" value="회원가입" style="width: 15%">
 						<input type="reset" value="다시입력" style="width: 15%">
 						<input type="button" value="돌아가기" style="width: 15%" onclick="home()">
 					</th>
