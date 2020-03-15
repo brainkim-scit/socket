@@ -161,9 +161,9 @@
 
 		<!-- web socket -->
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-websocket</artifactId>
-			<version>${org.springframework-version}</version>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-websocket</artifactId>
+		    <version>4.3.6.RELEASE</version>
 		</dependency>
 
 		<dependency>
