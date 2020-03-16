@@ -34,8 +34,31 @@ a{
 }
 
 </style>
+<script src="resources/js/jquery-3.4.1.min.js"></script>
+<script src="resources/js/sockjs.js"></script>
+<script src="resources/js/stomp.js"></script>
+<script type="text/javascript">
+	$(function(){
+		connect();
+	});
+
+	var sock;
+
+	function connect(){
+		sock = new SockJS("stomp");
+		var client = Stomp.over(sock);
+
+		client.connect({},function(){
+			client.subscribe("/topic/message/1", function(event){var body = JSON.parse(event.body); alert(body.roomid+"로부터 "+body.message)});
+			client.subscribe("/topic/message/2", function(event){var body = JSON.parse(event.body); alert(body.roomid+"로부터 "+body.message)});
+			client.subscribe("/topic/message/3", function(event){var body = JSON.parse(event.body); alert(body.roomid+"로부터 "+body.message)});
+		});
+	}
+
+</script>
 </head>
 <body>
+	
 	<div id="wrapper">
 		<div>
 			<h2>[ 게시판 ]</h2>
@@ -101,6 +124,14 @@ a{
 				</td>
 			</tr>
 		</table>
+		</div>
+		<div style="width: 600px; margin: 0 auto; text-align: center; margin-top: 30px;">
+			<input id="create" type="button" value="채팅방 생성">
+			<div id="list">
+				<a href="chat?roomid=1">1</a>
+				<a href="chat?roomid=2">2</a>
+				<a href="chat?roomid=3">3</a>
+			</div>
 		</div>
 	</div>
 </body>

@@ -5,7 +5,9 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import global.sesoc.board.vo.member;
 
@@ -17,18 +19,12 @@ public class MainController {
 	@GetMapping("/")
 	public String index(HttpSession session) {
 		logger.info("첫 페이지");
-		session.removeAttribute("select");
-		session.removeAttribute("aim");
-		session.removeAttribute("currentPage");
-		session.setAttribute("c", "check");
-		System.out.println((String)session.getAttribute("c"));
-		System.out.println((member)session.getAttribute("member"));
-		System.out.println((String)session.getAttribute("id"));
 		return "index";
 	}
 	
    @GetMapping("/chat")
-	public String chat() {
+	public String chat(String roomid, Model model) {
+	   	model.addAttribute("roomid", roomid);
 		return "chat";
     }
 }

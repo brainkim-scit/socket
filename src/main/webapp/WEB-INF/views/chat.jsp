@@ -26,26 +26,25 @@
 	});
 
 	var sock;
-	var isStomp = false;
 	function StompConnect(){
 		sock = new SockJS("stomp");
 		console.log(sock);
 		var client = Stomp.over(sock);
 		console.log(client);
-		isStomp = true;
 		sock = client;
 
-		client.connect({}, function(){
+		client.connect({}, function(frame){
+			console.log(frame);
 			console.log("Connected Stomp");
-			client.send("/board/TTT", {}, "message : haha");
-			client.subscribe("/topic/message", function(event){
+			client.subscribe("/topic/message/${requestScope.roomid}", function(event){
+				console.log(event);
 				onMessage(event);
 			});
 		});
 	}
 
 	function send(){
-		var nickname = "${sessionScope.member.username}";
+		var id = "${sessionScope.member.username}";
 		var message = $("#message").val();
 
 		var input = '';
@@ -57,25 +56,22 @@
 		$("#chatarea").append(input);
 		$("#chatarea").scrollTop($("#chatarea")[0].scrollHeight);
 
-		sock.send("/board/TTT", {}, message);
+		sock.send("/TTT", {}, JSON.stringify({id:id,message:message,roomid:"${requestScope.roomid}"}));
 
 		$("#message").val("");
 	}
 
 	function onMessage(event){
+		var data = JSON.parse(event.body);
+		if(data.id != "${sessionScope.member.username}"){
 		var input = '';
-		if(event.data.split(":").length == 1){
-			input += '<div class="a" style="width: 350px; text-align:center; line-height:50px; margin-top: 15px; display:inline-block;">';
-			input += event.body;
-			input += '</div>';
-		}else{
 			input += '<div class="a" style="width: 350px; line-height:50px; margin-top: 15px; display:inline-block;">';
 			input += '<div style="float: left; background-color:skyblue; padding-left: 15px; padding-right: 15px;">';
-			input += event.body;
+			input += data.id+" : "+data.message;
 			input += '</div></div>';
-		}
 		$("#chatarea").append(input);
 		$("#chatarea").scrollTop($("#chatarea")[0].scrollHeight);
+		}
 	}
 </script>
 </head>

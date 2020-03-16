@@ -11,12 +11,12 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 public class StompConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/stomp").addInterceptors(new chatInterceptor()).setAllowedOrigins("*").withSockJS();
+		registry.addEndpoint("/stomp").setAllowedOrigins("*").withSockJS();
 	}
 	
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
-		registry.enableSimpleBroker("/queue","/topic");
-		registry.setApplicationDestinationPrefixes("/board");
+		registry.enableSimpleBroker("/topic","/queue");
+		registry.setApplicationDestinationPrefixes("/");
 	}
 }
